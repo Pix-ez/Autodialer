@@ -11,7 +11,7 @@ This project is a **multi-tool web application built with Ruby on Rails**, combi
 3. **AI Blog Generator** (LLM-based)
 
 This was developed as a first-time exploration of Ruby and Rails, resulting in a simple, minimalistic app with three primary pages: **Autodialer**, **Scraper**, and **Blogs**.
-Hosted on render with docker image.
+Hosted on render with docker image. link-> [https://autodialer-v1.onrender.com/home]
 
 ---
 
