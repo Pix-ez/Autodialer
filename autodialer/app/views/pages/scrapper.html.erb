@@ -1,0 +1,74 @@
+<h1>🕷️ <%= @title %></h1>
+
+<div style="display: flex; gap: 20px; flex-wrap: wrap;">
+  
+  <!-- INPUT FORM -->
+  <div style="flex: 1; min-width: 300px; border: 1px solid #ccc; padding: 20px; border-radius: 8px; background: #f9f9f9;">
+    <h3>Input LinkedIn URLs</h3>
+    <p>Enter URLs separated by commas.</p>
+
+    <!-- Note: We added data: { turbo: false } to ensure the page refreshes and shows alerts -->
+    <%= form_with url: "/scrape_urls", method: :post, local: true, data: { turbo: false } do |form| %>
+      <div style="margin-bottom: 15px;">
+        <%= form.text_area :urls, rows: 8, placeholder: "https://linkedin.com/in/user1,\nhttps://linkedin.com/in/user2", style: "width: 100%; padding: 10px;" %>
+      </div>
+      <%= form.submit "Scrape Profiles", style: "background: #28a745; color: white; padding: 10px 20px; border: none; cursor: pointer;" %>
+    <% end %>
+  </div>
+
+  <!-- RESULTS DISPLAY -->
+  <% if @api_response.present? %>
+    <div style="flex: 1; min-width: 300px; overflow-x: auto;">
+      
+      <!-- 1. ERROR HANDLING -->
+      <% if @api_response["error"] %>
+        <div style="background: #ffeeba; color: #856404; padding: 15px; border-radius: 5px;">
+          <h3>⚠️ Error</h3>
+          <p><%= @api_response["message"] || @api_response["error"] %></p>
+        </div>
+
+      <!-- 2. SUCCESS: PRETTY DISPLAY -->
+      <% elsif @api_response["profiles"].is_a?(Array) && @api_response["profiles"].any? %>
+        <h3>📦 Scraped <%= @api_response["count"] %> Profile(s)</h3>
+        
+        <% @api_response["profiles"].each do |profile| %>
+          <div style="border: 1px solid #ddd; margin-bottom: 15px; border-radius: 5px; background: #fff; overflow: hidden;">
+            <!-- Header -->
+            <div style="background: #eee; padding: 10px; font-weight: bold; font-size: 0.9em; border-bottom: 1px solid #ddd;">
+              🔗 <%= profile["url"] %>
+            </div>
+            
+            <!-- Data Body -->
+            <div style="padding: 15px;">
+              <% if profile["scraped_data"].is_a?(Hash) %>
+                <ul style="list-style: none; padding: 0; margin: 0;">
+                  <% profile["scraped_data"].each do |k, v| %>
+                    <li style="margin-bottom: 5px; padding-bottom: 5px; border-bottom: 1px dashed #eee;">
+                      <strong><%= k.to_s.humanize %>:</strong> 
+                      <span style="color: #555; word-break: break-word;"><%= v %></span>
+                    </li>
+                  <% end %>
+                </ul>
+              <% elsif profile["scraped_data"].present? %>
+                 <p><strong>Data:</strong> <%= profile["scraped_data"] %></p>
+              <% else %>
+                 <p style="color: red;">No data returned for this profile.</p>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+
+      <!-- 3. FALLBACK -->
+      <% else %>
+        <div style="background: #fff; border: 1px solid #ccc; padding: 15px; border-radius: 5px;">
+          <h3 style="color: orange;">⚠️ Unexpected Format</h3>
+          <pre style="background: #333; color: #0f0; padding: 15px; border-radius: 4px; overflow: auto;">
+<%= JSON.pretty_generate(@api_response) rescue @api_response %>
+          </pre>
+        </div>
+      <% end %>
+
+    </div>
+  <% end %>
+
+</div>

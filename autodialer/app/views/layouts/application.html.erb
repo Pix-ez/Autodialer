@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Rails App</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+    <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+  </head>
+
+  <body style="margin: 0; font-family: sans-serif;">
+    
+    <!-- NAVBAR -->
+    <nav style="background: #333; padding: 15px; color: white;">
+      <div style="max-width: 800px; margin: 0 auto;">
+        <a href="/home" style="color: white; margin-right: 20px; text-decoration: none; font-weight: bold;">🏠 Home</a>
+        <a href="/scrapper" style="color: white; margin-right: 20px; text-decoration: none;">🕷️ Scrapper</a>
+        <a href="/blogs" style="color: white; text-decoration: none;">📝 Blogs</a>
+      </div>
+    </nav>
+
+    <!-- MAIN CONTAINER -->
+    <div style="max-width: 1000px; margin: 20px auto; padding: 0 15px;">
+      
+      <!-- GLOBAL FLASH MESSAGES -->
+      <!-- This ensures alerts show up on ANY page -->
+      <% if flash[:notice] %>
+        <div style="background: #d4edda; color: #155724; padding: 10px; border-radius: 4px; margin-bottom: 15px; border: 1px solid #c3e6cb;">
+          ✅ <%= flash[:notice] %>
+        </div>
+      <% end %>
+      
+      <% if flash[:alert] %>
+        <div style="background: #f8d7da; color: #721c24; padding: 10px; border-radius: 4px; margin-bottom: 15px; border: 1px solid #f5c6cb;">
+          ⚠️ <%= flash[:alert] %>
+        </div>
+      <% end %>
+
+      <!-- PAGE CONTENT INJECTED HERE -->
+      <%= yield %>
+      
+    </div>
+
+  </body>
+</html>

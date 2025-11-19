@@ -1,0 +1,66 @@
+<h1>📝 <%= @title %></h1>
+
+<div style="display: flex; gap: 30px; flex-wrap: wrap;">
+
+  <!-- LEFT COLUMN: BLOG SHOWCASE (New + Static) -->
+  <div style="flex: 1; min-width: 300px;">
+    <h2 style="border-bottom: 2px solid #333; padding-bottom: 10px;">Featured Articles</h2>
+    
+    <!-- 1. NEWLY GENERATED BLOG (If available) -->
+    <% if @generated_result.present? && !@generated_result["error"] %>
+      <div style="border: 2px solid #28a745; background: #f0fff4; padding: 20px; margin-bottom: 20px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+        <div style="font-size: 0.8em; font-weight: bold; color: #28a745; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px;">
+          ✨ Just Generated
+        </div>
+        
+        <h3 style="margin-top: 0; color: #155724;"><%= @generated_result["title"] %></h3>
+        
+        <!-- simple_format preserves paragraphs from the AI text -->
+        <div style="color: #333; line-height: 1.6;">
+          <%= simple_format(@generated_result["content"]) %>
+        </div>
+      </div>
+    <% end %>
+
+    <!-- 2. STATIC HARDCODED BLOGS -->
+    <% @static_blogs.each do |blog| %>
+      <div style="border: 1px solid #ddd; padding: 20px; margin-bottom: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+        <h3 style="margin-top: 0; color: #0056b3;"><%= blog[:title] %></h3>
+        <p style="color: #555; line-height: 1.6;"><%= blog[:data] %></p>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- RIGHT COLUMN: AI GENERATOR FORM -->
+  <div style="flex: 1; min-width: 300px;">
+    <div style="background: #f8f9fa; padding: 25px; border-radius: 8px; border: 1px solid #e9ecef; position: sticky; top: 20px;">
+      <h2 style="margin-top: 0;">🤖 AI Content Generator</h2>
+      <p style="font-size: 0.9em; color: #666;">Powered by Groq API</p>
+
+      <%= form_with url: "/generate_blog", method: :post, local: true, data: { turbo: false } do |form| %>
+        
+        <div style="margin-bottom: 15px;">
+          <%= form.label :blog_title, "Blog Title (Required):", style: "font-weight: bold;" %>
+          <%= form.text_field :blog_title, required: true, placeholder: "e.g., The Future of Ruby", style: "width: 100%; padding: 8px; margin-top: 5px;" %>
+        </div>
+
+        <div style="margin-bottom: 15px;">
+          <%= form.label :blog_details, "Details / Context (Optional):", style: "font-weight: bold;" %>
+          <%= form.text_area :blog_details, rows: 3, placeholder: "e.g., Focus on performance and scale...", style: "width: 100%; padding: 8px; margin-top: 5px;" %>
+        </div>
+
+        <%= form.submit "✨ Generate with AI", style: "width: 100%; background: #6f42c1; color: white; padding: 12px; border: none; border-radius: 4px; font-size: 16px; cursor: pointer;" %>
+      <% end %>
+      
+      <!-- Show Errors Here (Only if generation failed) -->
+      <% if @generated_result.present? && @generated_result["error"] %>
+        <div style="margin-top: 20px; padding: 15px; background: #fff3cd; color: #856404; border-radius: 4px;">
+          <strong>⚠️ Generation Error:</strong><br>
+          <%= @generated_result["message"] %>
+        </div>
+      <% end %>
+
+    </div>
+  </div>
+
+</div>

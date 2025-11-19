@@ -1,0 +1,51 @@
+<h1>🏠 <%= @title %></h1>
+
+<!-- INPUT FORM -->
+<div style="border: 1px solid #ccc; padding: 20px; border-radius: 8px; max-width: 600px; background: #f9f9f9;">
+  <h3>📞 Bulk Auto Dialer</h3>
+  <p>Enter phone numbers separated by commas (e.g., <code>91987654321, 1555019988</code>)</p>
+
+  <!-- Added data: { turbo: false } here -->
+  <%= form_with url: "/make_call", method: :post, local: true, data: { turbo: false } do |form| %>
+    <div style="margin-bottom: 15px;">
+      <%= form.label :phone_numbers, "Phone Numbers List:" %><br>
+      <%= form.text_area :phone_numbers, 
+          rows: 5, 
+          placeholder: "919876543210, \n919988776655", 
+          style: "width: 100%; padding: 10px; border-radius: 4px; border: 1px solid #aaa;" 
+      %>
+    </div>
+    
+    <%= form.submit "Start Dialing", style: "background: #007bff; color: white; padding: 10px 20px; border: none; cursor: pointer; font-size: 16px; border-radius: 4px;" %>
+  <% end %>
+</div>
+
+<!-- RESULTS TABLE (Only shows if @results has data) -->
+<% if @results.present? %>
+  <h3 style="margin-top: 30px;">📊 Call Status Report</h3>
+  <table style="width: 100%; border-collapse: collapse; border: 1px solid #ddd;">
+    <thead>
+      <tr style="background: #333; color: white; text-align: left;">
+        <th style="padding: 10px;">Phone Number</th>
+        <th style="padding: 10px;">Status</th>
+        <th style="padding: 10px;">Details</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @results.each do |res| %>
+        <tr style="border-bottom: 1px solid #ddd;">
+          <td style="padding: 10px;"><%= res[:number] %></td>
+          
+          <!-- Conditional Coloring based on Status -->
+          <td style="padding: 10px; font-weight: bold; color: <%= res[:status] == 'Called' ? 'green' : 'red' %>;">
+            <%= res[:status] %>
+          </td>
+          
+          <td style="padding: 10px; color: #555; font-size: 0.9em;">
+            <%= res[:details] %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% end %>

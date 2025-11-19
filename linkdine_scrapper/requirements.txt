@@ -1,0 +1,7 @@
+fastapi
+groq
+playwright
+playwright-stealth
+pydantic
+python-dotenv
+uvicorn
